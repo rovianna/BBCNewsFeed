@@ -108,7 +108,7 @@ extension NewsFeedTableViewController: NewsFeedRepository {
                 }
                 self.saveNewsFeedLocally(self.newsFeed)
             case .failure(let error):
-                print("Error: \(error)")
+                self.showError(error: error)
             }
         }
     }
