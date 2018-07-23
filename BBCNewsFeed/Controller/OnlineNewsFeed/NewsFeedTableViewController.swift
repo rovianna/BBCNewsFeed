@@ -11,11 +11,13 @@ import Alamofire
 import SWXMLHash
 
 protocol NewsFeedRepository {
-    func getNewsFeed()
+    func getOnlineNewsFeed()
+    func getOfflineNewsFeed()
 }
 
 fileprivate let nib = UINib(nibName: "NewsFeedTableViewCell", bundle: nil)
 fileprivate let userDefaults = UserDefaults.standard
+
 class NewsFeedTableViewController: UITableViewController {
     
     lazy var tableRefreshControl: UIRefreshControl = {
@@ -25,9 +27,6 @@ class NewsFeedTableViewController: UITableViewController {
         return refreshControl
     }()
 
-    
-    
-    
     var newsFeed = [NewsFeed]() {
         didSet {
             tableView.reloadData()
@@ -37,16 +36,29 @@ class NewsFeedTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(nib, forCellReuseIdentifier: "news")
-        getNewsFeed()
+        if Connectivity.isConnectedToInternet {
+        getOnlineNewsFeed()
+        } else {
+         newsFeed = retrieveLocalNewsFeed()
+        }
         self.tableView.insertSubview(tableRefreshControl, at: 0)
     }
 
-    
     @objc func handleRefresh(_ sender: UIRefreshControl) {
-        getNewsFeed()
+        getOnlineNewsFeed()
         tableRefreshControl.endRefreshing()
-        let decoded = userDefaults.object(forKey: "newsFeed") as! Data
-        let decodedFeed = NSKeyedUnarchiver.unarchiveObject(with: decoded) as! [NewsFeed]
+    }
+    
+    func retrieveLocalNewsFeed() -> [NewsFeed] {
+        let decodedData = userDefaults.object(forKey: "newsFeed") as! Data
+        let decodedNews = NSKeyedUnarchiver.unarchiveObject(with: decodedData) as! [NewsFeed]
+        return decodedNews
+    }
+    
+    func saveNewsFeedLocally(_ newsFeed: [NewsFeed]) {
+        let encodedData: Data = NSKeyedArchiver.archivedData(withRootObject: newsFeed)
+        userDefaults.set(encodedData, forKey: "newsFeed")
+        userDefaults.synchronize()
     }
 
     // MARK: - Table view data source
@@ -79,7 +91,13 @@ class NewsFeedTableViewController: UITableViewController {
 }
 
 extension NewsFeedTableViewController: NewsFeedRepository {
-    func getNewsFeed() {
+    func getOfflineNewsFeed() {
+        let decodedData = userDefaults.object(forKey: "newsFeed") as! Data
+        let decodedNews = NSKeyedUnarchiver.unarchiveObject(with: decodedData) as! [NewsFeed]
+        self.newsFeed = decodedNews
+    }
+    
+    func getOnlineNewsFeed() {
         Alamofire.request("http://feeds.bbci.co.uk/portuguese/rss.xml", method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil).responseString { (response) in
             switch response.result {
             case .success(let data):
@@ -88,11 +106,7 @@ extension NewsFeedTableViewController: NewsFeedRepository {
                     let news = NewsFeed(with: elem)
                     self.newsFeed.append(news)
                 }
-                let encodedData: Data = NSKeyedArchiver.archivedData(withRootObject: self.newsFeed)
-                userDefaults.set(encodedData, forKey: "newsFeed")
-                userDefaults.synchronize()
-                let decodedData = userDefaults.object(forKey: "newsFeed") as! Data
-                let decodedNews = NSKeyedUnarchiver.unarchiveObject(with: decodedData) as! [NewsFeed]
+                self.saveNewsFeedLocally(self.newsFeed)
             case .failure(let error):
                 print("Error: \(error)")
             }
