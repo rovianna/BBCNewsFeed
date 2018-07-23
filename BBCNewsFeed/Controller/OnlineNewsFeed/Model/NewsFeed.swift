@@ -30,5 +30,7 @@ class NewsFeed {
         link = data["link"].element!.text
     }
     
+    
+    
 }
 

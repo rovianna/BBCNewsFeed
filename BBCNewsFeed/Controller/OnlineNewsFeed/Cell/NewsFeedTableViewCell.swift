@@ -25,4 +25,7 @@ class NewsFeedTableViewCell: UITableViewCell {
         descriptionLabel.text = news.description
         dateLabel.text = news.date
     }
+    
+    
+    
 }

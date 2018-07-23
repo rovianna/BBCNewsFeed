@@ -20,6 +20,7 @@
 		495D7CAE2105E38A0082064F /* NewsFeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495D7CAC2105E38A0082064F /* NewsFeedTableViewCell.swift */; };
 		495D7CAF2105E38A0082064F /* NewsFeedTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 495D7CAD2105E38A0082064F /* NewsFeedTableViewCell.xib */; };
 		495D7CB22105E76A0082064F /* NewsFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 495D7CB12105E76A0082064F /* NewsFeed.swift */; };
+		49EE0EC82105FF3F00597407 /* Connectivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49EE0EC72105FF3F00597407 /* Connectivity.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,7 @@
 		495D7CAC2105E38A0082064F /* NewsFeedTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsFeedTableViewCell.swift; sourceTree = "<group>"; };
 		495D7CAD2105E38A0082064F /* NewsFeedTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewsFeedTableViewCell.xib; sourceTree = "<group>"; };
 		495D7CB12105E76A0082064F /* NewsFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsFeed.swift; sourceTree = "<group>"; };
+		49EE0EC72105FF3F00597407 /* Connectivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connectivity.swift; sourceTree = "<group>"; };
 		6D0196346D37CA185A58E6DA /* Pods_BBCNewsFeed.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BBCNewsFeed.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		78DCC88A751975BE1A54B9C7 /* Pods-BBCNewsFeedTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BBCNewsFeedTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-BBCNewsFeedTests/Pods-BBCNewsFeedTests.release.xcconfig"; sourceTree = "<group>"; };
 		87BF4FC6D3E1C326393B2850 /* Pods-BBCNewsFeed.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BBCNewsFeed.release.xcconfig"; path = "Pods/Target Support Files/Pods-BBCNewsFeed/Pods-BBCNewsFeed.release.xcconfig"; sourceTree = "<group>"; };
@@ -120,6 +122,7 @@
 		495D7C762105E22D0082064F /* BBCNewsFeed */ = {
 			isa = PBXGroup;
 			children = (
+				49EE0EC62105FF2800597407 /* Utils */,
 				495D7CA62105E2480082064F /* View */,
 				495D7CA52105E23E0082064F /* Controller */,
 				495D7C772105E22D0082064F /* AppDelegate.swift */,
@@ -189,6 +192,14 @@
 				495D7CB12105E76A0082064F /* NewsFeed.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		49EE0EC62105FF2800597407 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				49EE0EC72105FF3F00597407 /* Connectivity.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		7144A3C39BB2A01FB2B88D64 /* Frameworks */ = {
@@ -431,6 +442,7 @@
 				495D7C782105E22D0082064F /* AppDelegate.swift in Sources */,
 				495D7CB22105E76A0082064F /* NewsFeed.swift in Sources */,
 				495D7CAE2105E38A0082064F /* NewsFeedTableViewCell.swift in Sources */,
+				49EE0EC82105FF3F00597407 /* Connectivity.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,6 +10,10 @@ import UIKit
 import Alamofire
 import SWXMLHash
 
+protocol NewsFeedRepository {
+    func getNewsFeed()
+}
+
 fileprivate let nib = UINib(nibName: "NewsFeedTableViewCell", bundle: nil)
 
 class NewsFeedTableViewController: UITableViewController {
@@ -30,13 +34,13 @@ class NewsFeedTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(nib, forCellReuseIdentifier: "news")
-        requestTest()
+        getNewsFeed()
         self.tableView.insertSubview(tableRefreshControl, at: 0)
     }
 
     
     @objc func handleRefresh(_ sender: UIRefreshControl) {
-        requestTest()
+        getNewsFeed()
         tableRefreshControl.endRefreshing()
     }
 
@@ -69,8 +73,8 @@ class NewsFeedTableViewController: UITableViewController {
     }
 }
 
-extension NewsFeedTableViewController {
-    func requestTest(){
+extension NewsFeedTableViewController: NewsFeedRepository {
+    func getNewsFeed() {
         Alamofire.request("http://feeds.bbci.co.uk/portuguese/rss.xml", method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil).responseString { (response) in
             switch response.result {
             case .success(let data):
