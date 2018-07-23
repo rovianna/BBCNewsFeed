@@ -8,10 +8,13 @@
 
 import UIKit
 
-class NewsFeedTableViewController: UITableViewController {
+fileprivate let nib = UINib(nibName: "NewsFeedTableViewCell", bundle: nil)
 
+class NewsFeedTableViewController: UITableViewController {
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.register(nib, forCellReuseIdentifier: "news")
     }
 
     // MARK: - Table view data source
@@ -24,8 +27,13 @@ class NewsFeedTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-
+        let cell = tableView.dequeueReusableCell(withIdentifier: "news", for: indexPath) as! NewsFeedTableViewCell
         return cell
     }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "news") as! NewsFeedTableViewCell
+        return cell.frame.size.height
+    }
+    
 }
