@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Alamofire
+import SWXMLHash
 
 fileprivate let nib = UINib(nibName: "NewsFeedTableViewCell", bundle: nil)
 
@@ -15,6 +17,13 @@ class NewsFeedTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(nib, forCellReuseIdentifier: "news")
+        requestTest()
+    }
+    
+    var newsFeed = [NewsFeed]() {
+        didSet {
+            tableView.reloadData()
+        }
     }
 
     // MARK: - Table view data source
@@ -23,11 +32,13 @@ class NewsFeedTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return newsFeed.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let news = newsFeed[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "news", for: indexPath) as! NewsFeedTableViewCell
+        cell.configure(news: news)
         return cell
     }
     
@@ -35,5 +46,21 @@ class NewsFeedTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "news") as! NewsFeedTableViewCell
         return cell.frame.size.height
     }
-    
+}
+
+extension NewsFeedTableViewController {
+    func requestTest(){
+        Alamofire.request("http://feeds.bbci.co.uk/portuguese/rss.xml", method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil).responseString { (response) in
+            switch response.result {
+            case .success(let data):
+                let xml = SWXMLHash.parse(data)
+                for elem in xml["rss"]["channel"]["item"].all {
+                    let news = NewsFeed(with: elem)
+                    self.newsFeed.append(news)
+                }
+            case .failure(let error):
+                print("Error: \(error)")
+            }
+        }
+    }
 }
