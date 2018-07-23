@@ -14,16 +14,30 @@ fileprivate let nib = UINib(nibName: "NewsFeedTableViewCell", bundle: nil)
 
 class NewsFeedTableViewController: UITableViewController {
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        tableView.register(nib, forCellReuseIdentifier: "news")
-        requestTest()
-    }
+    lazy var tableRefreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(handleRefresh(_:)), for: .valueChanged)
+        refreshControl.tintColor = .black
+        return refreshControl
+    }()
     
     var newsFeed = [NewsFeed]() {
         didSet {
             tableView.reloadData()
         }
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        tableView.register(nib, forCellReuseIdentifier: "news")
+        requestTest()
+        self.tableView.insertSubview(tableRefreshControl, at: 0)
+    }
+
+    
+    @objc func handleRefresh(_ sender: UIRefreshControl) {
+        requestTest()
+        tableRefreshControl.endRefreshing()
     }
 
     // MARK: - Table view data source
@@ -45,6 +59,13 @@ class NewsFeedTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let cell = tableView.dequeueReusableCell(withIdentifier: "news") as! NewsFeedTableViewCell
         return cell.frame.size.height
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let news = newsFeed[indexPath.row]
+        if let url = URL(string: news.link) {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        }
     }
 }
 

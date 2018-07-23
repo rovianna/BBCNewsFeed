@@ -14,6 +14,12 @@ class NewsFeedTableViewCell: UITableViewCell {
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
     
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        selectionStyle = .none
+    }
+    
     func configure(news: NewsFeed){
         headerLabel.text = news.header
         descriptionLabel.text = news.description
