@@ -9,15 +9,15 @@
 import UIKit
 import SWXMLHash
 
-class NewsFeed {
+class NewsFeed: NSObject, NSCoding {
     var header: String
-    var description: String
+    var news: String
     var date: String
     var link: String
     
-    init(header: String, description: String, date: String, link: String) {
+    init(header: String, news: String, date: String, link: String) {
         self.header = header
-        self.description = description
+        self.news = news
         self.date = date
         self.link = link
     }
@@ -25,12 +25,26 @@ class NewsFeed {
     /* Sheesh */
     init(with data: XMLIndexer) {
         header = data["title"].element!.text
-        description = data["description"].element!.text
+        news = data["description"].element!.text
         date = data["pubDate"].element!.text
         link = data["link"].element!.text
     }
     
+    required convenience init(coder aDecoder: NSCoder) {
+        let header = aDecoder.decodeObject(forKey: "header") as! String
+        let news = aDecoder.decodeObject(forKey: "news") as! String
+        let date = aDecoder.decodeObject(forKey: "date") as! String
+        let link = aDecoder.decodeObject(forKey: "link") as! String
+        
+        self.init(header: header, news: news, date: date, link: link)
+    }
     
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(header, forKey: "header")
+        aCoder.encode(news, forKey: "news")
+        aCoder.encode(date, forKey: "date")
+        aCoder.encode(link, forKey: "link")
+    }
     
 }
 

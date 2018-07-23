@@ -15,7 +15,7 @@ protocol NewsFeedRepository {
 }
 
 fileprivate let nib = UINib(nibName: "NewsFeedTableViewCell", bundle: nil)
-
+fileprivate let userDefaults = UserDefaults.standard
 class NewsFeedTableViewController: UITableViewController {
     
     lazy var tableRefreshControl: UIRefreshControl = {
@@ -24,6 +24,9 @@ class NewsFeedTableViewController: UITableViewController {
         refreshControl.tintColor = .black
         return refreshControl
     }()
+
+    
+    
     
     var newsFeed = [NewsFeed]() {
         didSet {
@@ -42,6 +45,8 @@ class NewsFeedTableViewController: UITableViewController {
     @objc func handleRefresh(_ sender: UIRefreshControl) {
         getNewsFeed()
         tableRefreshControl.endRefreshing()
+        let decoded = userDefaults.object(forKey: "newsFeed") as! Data
+        let decodedFeed = NSKeyedUnarchiver.unarchiveObject(with: decoded) as! [NewsFeed]
     }
 
     // MARK: - Table view data source
@@ -83,6 +88,11 @@ extension NewsFeedTableViewController: NewsFeedRepository {
                     let news = NewsFeed(with: elem)
                     self.newsFeed.append(news)
                 }
+                let encodedData: Data = NSKeyedArchiver.archivedData(withRootObject: self.newsFeed)
+                userDefaults.set(encodedData, forKey: "newsFeed")
+                userDefaults.synchronize()
+                let decodedData = userDefaults.object(forKey: "newsFeed") as! Data
+                let decodedNews = NSKeyedUnarchiver.unarchiveObject(with: decodedData) as! [NewsFeed]
             case .failure(let error):
                 print("Error: \(error)")
             }

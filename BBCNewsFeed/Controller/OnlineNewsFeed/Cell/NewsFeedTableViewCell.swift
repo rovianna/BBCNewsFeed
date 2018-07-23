@@ -22,7 +22,7 @@ class NewsFeedTableViewCell: UITableViewCell {
     
     func configure(news: NewsFeed){
         headerLabel.text = news.header
-        descriptionLabel.text = news.description
+        descriptionLabel.text = news.news
         dateLabel.text = news.date
     }
     
