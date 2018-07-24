@@ -18,7 +18,7 @@ protocol NewsFeedRepository {
 fileprivate let userDefaults = UserDefaults.standard
 
 class NewsFeedViewController: UIViewController {
-
+    
     @IBOutlet weak var newsFeedTableView: UITableView!
     
     lazy var tableRefreshControl: UIRefreshControl = {
@@ -43,7 +43,7 @@ class NewsFeedViewController: UIViewController {
         }
         self.newsFeedTableView.insertSubview(tableRefreshControl, at: 0)
     }
-
+    
     @objc func handleRefresh(_ sender: UIRefreshControl) {
         getOnlineNewsFeed()
         tableRefreshControl.endRefreshing()
@@ -75,6 +75,14 @@ class NewsFeedViewController: UIViewController {
         userDefaults.synchronize()
     }
     
+    func retrieveOnlineNewsFeed(xml: XMLIndexer) {
+        for elem in xml["rss"]["channel"]["item"].all {
+            let news = NewsFeed(with: elem)
+            self.newsFeed.append(news)
+        }
+        self.saveNewsFeedLocally(self.newsFeed)
+    }
+    
 }
 
 extension NewsFeedViewController: NewsFeedRepository {
@@ -89,11 +97,18 @@ extension NewsFeedViewController: NewsFeedRepository {
             switch response.result {
             case .success(let data):
                 let xml = SWXMLHash.parse(data)
-                for elem in xml["rss"]["channel"]["item"].all {
-                    let news = NewsFeed(with: elem)
-                    self.newsFeed.append(news)
+                let lastBuildDate = xml["rss"]["channel"]["lastBuildDate"].description
+                if userDefaults.object(forKey: "lastBuildDate") == nil {
+                    userDefaults.set(lastBuildDate, forKey: "lastBuildDate")
+                    self.retrieveOnlineNewsFeed(xml: xml)
+                } else {
+                    let buildDate = userDefaults.object(forKey: "lastBuildDate") as! String
+                    if buildDate == lastBuildDate {
+                        self.newsFeed = self.retrieveLocalNewsFeed()
+                    } else {
+                        self.retrieveOnlineNewsFeed(xml: xml)
+                    }
                 }
-                self.saveNewsFeedLocally(self.newsFeed)
             case .failure(let error):
                 self.showError(error: error)
             }

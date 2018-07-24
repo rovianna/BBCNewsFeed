@@ -26,6 +26,12 @@ class NewsFeedTableViewCell: UITableViewCell {
         dateLabel.text = news.date
     }
     
-    
+    func configureDateFrom(_ news: NewsFeed) -> Date {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd MMMM YYYY"
+        dateFormatter.locale = Locale(identifier: "pt_BR")
+        guard let date = dateFormatter.date(from: news.date) else { return Date() }
+        return date
+    }
     
 }
