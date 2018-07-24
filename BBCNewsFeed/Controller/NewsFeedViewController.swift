@@ -27,6 +27,7 @@ class NewsFeedViewController: UIViewController {
         refreshControl.tintColor = .black
         return refreshControl
     }()
+    
     var newsFeed = [NewsFeed]() {
         didSet {
             loadNewsFeed(newsFeed)
@@ -39,6 +40,7 @@ class NewsFeedViewController: UIViewController {
         if Connectivity.isConnectedToInternet {
             getOnlineNewsFeed()
         } else {
+            showInformView(status: .offline)
             newsFeed = retrieveLocalNewsFeed()
         }
         self.newsFeedTableView.insertSubview(tableRefreshControl, at: 0)
@@ -51,6 +53,7 @@ class NewsFeedViewController: UIViewController {
     
     func loadNewsFeed(_ newsFeed: [NewsFeed]) {
         receiveNewsFeed(newsFeed)
+        self.newsFeedTableView.reloadData()
     }
     
     func receiveNewsFeed(_ newsFeed: [NewsFeed]) {
@@ -91,11 +94,41 @@ class NewsFeedViewController: UIViewController {
             let buildDate = userDefaults.object(forKey: "lastBuildDate") as! String
             if buildDate == lastBuildDate {
                 self.newsFeed = self.retrieveLocalNewsFeed()
+                showInformView(status: .updateNotNeeded)
             } else {
                 self.retrieveOnlineNewsFeed(xml: xml)
+                showInformView(status: .updateNeeded)
             }
         }
     }
+    
+    func showInformView(status: UserAlertView.InfoStatus) {
+        switch status {
+        case .offline: layoutInformView(status: .offline)
+        case .updateNeeded: layoutInformView(status: .updateNeeded)
+        case .updateNotNeeded: layoutInformView(status: .updateNotNeeded)
+        }
+    }
+    
+    func layoutInformView(status: UserAlertView.InfoStatus) {
+        let userAlert = UserAlertView.instance
+        UIView.animate(withDuration: 0.3) {
+            self.view.addSubview(userAlert)
+            self.view.bringSubview(toFront: userAlert)
+        }
+        userAlert.translatesAutoresizingMaskIntoConstraints = false
+        userAlert.topAnchor.constraint(equalTo: newsFeedTableView.topAnchor).isActive = true
+        userAlert.leadingAnchor.constraint(equalTo: newsFeedTableView.leadingAnchor).isActive = true
+        userAlert.trailingAnchor.constraint(equalTo: newsFeedTableView.trailingAnchor).isActive = true
+        userAlert.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        userAlert.configureViewBy(status: status)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            UIView.animate(withDuration: 0.5, animations: {
+                userAlert.removeFromSuperview()
+            })
+        }
+    }
+    
 }
 
 extension NewsFeedViewController: NewsFeedRepository {

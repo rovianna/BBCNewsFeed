@@ -26,7 +26,7 @@
             </objects>
             <point key="canvasLocation" x="-719" y="-806"/>
         </scene>
-        <!--News Feed View Controller-->
+        <!--News-->
         <scene sceneID="sjl-hP-3S4">
             <objects>
                 <viewController id="CqX-CZ-frJ" customClass="NewsFeedViewController" customModule="BBCNewsFeed" customModuleProvider="target" sceneMemberID="viewController">
@@ -58,7 +58,7 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="g04-M0-oyC"/>
                     </view>
-                    <navigationItem key="navigationItem" id="jER-VS-96h"/>
+                    <navigationItem key="navigationItem" title="News" id="jER-VS-96h"/>
                     <connections>
                         <outlet property="newsFeedTableView" destination="LFE-Yb-1c2" id="nQb-e0-D0E"/>
                     </connections>
