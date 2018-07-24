@@ -83,6 +83,19 @@ class NewsFeedViewController: UIViewController {
         self.saveNewsFeedLocally(self.newsFeed)
     }
     
+    func validateNewsLastBuildDate(_ lastBuildDate: String, xml: XMLIndexer) {
+        if userDefaults.object(forKey: "lastBuildDate") == nil {
+            userDefaults.set(lastBuildDate, forKey: "lastBuildDate")
+            self.retrieveOnlineNewsFeed(xml: xml)
+        } else {
+            let buildDate = userDefaults.object(forKey: "lastBuildDate") as! String
+            if buildDate == lastBuildDate {
+                self.newsFeed = self.retrieveLocalNewsFeed()
+            } else {
+                self.retrieveOnlineNewsFeed(xml: xml)
+            }
+        }
+    }
 }
 
 extension NewsFeedViewController: NewsFeedRepository {
@@ -98,17 +111,7 @@ extension NewsFeedViewController: NewsFeedRepository {
             case .success(let data):
                 let xml = SWXMLHash.parse(data)
                 let lastBuildDate = xml["rss"]["channel"]["lastBuildDate"].description
-                if userDefaults.object(forKey: "lastBuildDate") == nil {
-                    userDefaults.set(lastBuildDate, forKey: "lastBuildDate")
-                    self.retrieveOnlineNewsFeed(xml: xml)
-                } else {
-                    let buildDate = userDefaults.object(forKey: "lastBuildDate") as! String
-                    if buildDate == lastBuildDate {
-                        self.newsFeed = self.retrieveLocalNewsFeed()
-                    } else {
-                        self.retrieveOnlineNewsFeed(xml: xml)
-                    }
-                }
+                self.validateNewsLastBuildDate(lastBuildDate, xml: xml)
             case .failure(let error):
                 self.showError(error: error)
             }
