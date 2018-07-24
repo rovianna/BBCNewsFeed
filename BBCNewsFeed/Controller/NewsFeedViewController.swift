@@ -59,6 +59,7 @@ class NewsFeedViewController: UIViewController {
     }
     
     func applyDataSource(source: NewsFeedDataSource) {
+        source.delegate = self
         self.source = source
     }
     
@@ -98,6 +99,12 @@ extension NewsFeedViewController: NewsFeedRepository {
             }
         }
     }
-    
-    
+}
+
+extension NewsFeedViewController: NewsFeedDelegate {
+    func newsFeedDataSource(_ newsFeedDataSource: NewsFeedDataSource, selectedItem: NewsFeed) {
+        if let url = URL(string: selectedItem.link) {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        }
+    }
 }

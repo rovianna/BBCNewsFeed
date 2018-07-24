@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol NewsFeedDelegate {
+    func newsFeedDataSource(_ newsFeedDataSource: NewsFeedDataSource, selectedItem: NewsFeed)
+}
+
 class NewsFeedDataSource: NSObject, UITableViewDelegate, UITableViewDataSource {
     weak var tableView: UITableView?
     
@@ -18,6 +22,8 @@ class NewsFeedDataSource: NSObject, UITableViewDelegate, UITableViewDataSource {
             }
         }
     }
+    
+    var delegate: NewsFeedDelegate?
     
     init(tableView: UITableView, newsFeed: [NewsFeed]) {
         super.init()
@@ -57,11 +63,8 @@ class NewsFeedDataSource: NSObject, UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let news = newsFeed[indexPath.row]
-        if let url = URL(string: news.link) {
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        }
+        delegate?.newsFeedDataSource(self, selectedItem: news)
     }
-    
 }
 
 
