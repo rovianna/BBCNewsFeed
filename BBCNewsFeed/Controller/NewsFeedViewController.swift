@@ -1,8 +1,8 @@
 //
-//  NewsFeedTableViewController.swift
+//  NewsFeedViewController.swift
 //  BBCNewsFeed
 //
-//  Created by Rodrigo Vianna on 23/07/18.
+//  Created by Rodrigo Vianna on 24/07/18.
 //  Copyright © 2018 Rodrigo Vianna. All rights reserved.
 //
 
@@ -15,10 +15,11 @@ protocol NewsFeedRepository {
     func getOfflineNewsFeed()
 }
 
-fileprivate let nib = UINib(nibName: "NewsFeedTableViewCell", bundle: nil)
 fileprivate let userDefaults = UserDefaults.standard
 
-class NewsFeedTableViewController: UITableViewController {
+class NewsFeedViewController: UIViewController {
+
+    @IBOutlet weak var newsFeedTableView: UITableView!
     
     lazy var tableRefreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
@@ -26,27 +27,39 @@ class NewsFeedTableViewController: UITableViewController {
         refreshControl.tintColor = .black
         return refreshControl
     }()
-
     var newsFeed = [NewsFeed]() {
         didSet {
-            tableView.reloadData()
+            loadNewsFeed(newsFeed)
         }
     }
+    var source: NewsFeedDataSource?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.register(nib, forCellReuseIdentifier: "news")
         if Connectivity.isConnectedToInternet {
-        getOnlineNewsFeed()
+            getOnlineNewsFeed()
         } else {
-         newsFeed = retrieveLocalNewsFeed()
+            newsFeed = retrieveLocalNewsFeed()
         }
-        self.tableView.insertSubview(tableRefreshControl, at: 0)
+        self.newsFeedTableView.insertSubview(tableRefreshControl, at: 0)
     }
 
     @objc func handleRefresh(_ sender: UIRefreshControl) {
         getOnlineNewsFeed()
         tableRefreshControl.endRefreshing()
+    }
+    
+    func loadNewsFeed(_ newsFeed: [NewsFeed]) {
+        receiveNewsFeed(newsFeed)
+    }
+    
+    func receiveNewsFeed(_ newsFeed: [NewsFeed]) {
+        let source = NewsFeedDataSource(tableView: newsFeedTableView, newsFeed: newsFeed)
+        applyDataSource(source: source)
+    }
+    
+    func applyDataSource(source: NewsFeedDataSource) {
+        self.source = source
     }
     
     func retrieveLocalNewsFeed() -> [NewsFeed] {
@@ -60,37 +73,10 @@ class NewsFeedTableViewController: UITableViewController {
         userDefaults.set(encodedData, forKey: "newsFeed")
         userDefaults.synchronize()
     }
-
-    // MARK: - Table view data source
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return newsFeed.count
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let news = newsFeed[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: "news", for: indexPath) as! NewsFeedTableViewCell
-        cell.configure(news: news)
-        return cell
-    }
     
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "news") as! NewsFeedTableViewCell
-        return cell.frame.size.height
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let news = newsFeed[indexPath.row]
-        if let url = URL(string: news.link) {
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        }
-    }
 }
 
-extension NewsFeedTableViewController: NewsFeedRepository {
+extension NewsFeedViewController: NewsFeedRepository {
     func getOfflineNewsFeed() {
         let decodedData = userDefaults.object(forKey: "newsFeed") as! Data
         let decodedNews = NSKeyedUnarchiver.unarchiveObject(with: decodedData) as! [NewsFeed]
@@ -112,4 +98,6 @@ extension NewsFeedTableViewController: NewsFeedRepository {
             }
         }
     }
+    
+    
 }
