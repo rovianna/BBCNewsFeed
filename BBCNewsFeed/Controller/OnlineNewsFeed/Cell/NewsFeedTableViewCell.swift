@@ -8,13 +8,19 @@
 
 import UIKit
 
+protocol NewsFeedTableViewCellDelegate {
+    func newsFeedTableViewCell(_ newsFeedTableViewCell: NewsFeedTableViewCell, didSelectNews: NewsFeed)
+    func newsFeedTableViewCell(_ newsFeedTableViewCell: NewsFeedTableViewCell, didDeselectNews: NewsFeed)
+}
+
 class NewsFeedTableViewCell: UITableViewCell {
     
     @IBOutlet weak var headerLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
     
-    
+    var delegate: NewsFeedTableViewCellDelegate?
+    var newsFeed: NewsFeed?
     override func awakeFromNib() {
         super.awakeFromNib()
         selectionStyle = .none
@@ -24,6 +30,7 @@ class NewsFeedTableViewCell: UITableViewCell {
         headerLabel.text = news.header
         descriptionLabel.text = news.news
         dateLabel.text = news.date
+        newsFeed = news
     }
     
     func configureDateFrom(_ news: NewsFeed) -> Date {
@@ -32,6 +39,20 @@ class NewsFeedTableViewCell: UITableViewCell {
         dateFormatter.locale = Locale(identifier: "pt_BR")
         guard let date = dateFormatter.date(from: news.date) else { return Date() }
         return date
+    }
+    
+    @IBAction func favoriteAction(_ sender: UIButton) {
+        if sender.imageView?.image == #imageLiteral(resourceName: "star") {
+            sender.setImage(#imageLiteral(resourceName: "favorite_star"), for: .normal)
+            if let news = newsFeed {
+            delegate?.newsFeedTableViewCell(self, didSelectNews: news)
+            }
+        } else {
+            sender.setImage(#imageLiteral(resourceName: "star"), for: .normal)
+            if let news = newsFeed {
+            delegate?.newsFeedTableViewCell(self, didDeselectNews: news)
+            }
+        }
     }
     
 }

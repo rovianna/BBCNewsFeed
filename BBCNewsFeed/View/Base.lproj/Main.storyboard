@@ -35,7 +35,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="LFE-Yb-1c2">
-                                <rect key="frame" x="0.0" y="64" width="375" height="603"/>
+                                <rect key="frame" x="0.0" y="92" width="375" height="575"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="news" id="oom-BW-fzr" customClass="NewsFeedTableViewCell" customModule="BBCNewsFeed" customModuleProvider="target">
@@ -48,13 +48,24 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="VDr-yA-Qrq">
+                                <rect key="frame" x="0.0" y="64" width="375" height="29"/>
+                                <segments>
+                                    <segment title="Atuais"/>
+                                    <segment title="Favoritas"/>
+                                </segments>
+                            </segmentedControl>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="LFE-Yb-1c2" firstAttribute="top" secondItem="g04-M0-oyC" secondAttribute="top" id="0vI-Ny-2ko"/>
-                            <constraint firstItem="LFE-Yb-1c2" firstAttribute="leading" secondItem="g04-M0-oyC" secondAttribute="leading" id="f4B-It-fwP"/>
-                            <constraint firstItem="LFE-Yb-1c2" firstAttribute="trailing" secondItem="g04-M0-oyC" secondAttribute="trailing" id="oKY-PK-x7N"/>
-                            <constraint firstItem="LFE-Yb-1c2" firstAttribute="bottom" secondItem="g04-M0-oyC" secondAttribute="bottom" id="xFZ-SE-1TG"/>
+                            <constraint firstItem="g04-M0-oyC" firstAttribute="trailing" secondItem="VDr-yA-Qrq" secondAttribute="trailing" id="8X8-6n-ufC"/>
+                            <constraint firstItem="LFE-Yb-1c2" firstAttribute="top" secondItem="VDr-yA-Qrq" secondAttribute="bottom" id="8s8-cf-JEq"/>
+                            <constraint firstItem="LFE-Yb-1c2" firstAttribute="trailing" secondItem="g04-M0-oyC" secondAttribute="trailing" id="9gC-4r-HBc"/>
+                            <constraint firstItem="VDr-yA-Qrq" firstAttribute="leading" secondItem="g04-M0-oyC" secondAttribute="leading" id="CTg-Ye-hJ0"/>
+                            <constraint firstItem="VDr-yA-Qrq" firstAttribute="top" secondItem="g04-M0-oyC" secondAttribute="top" id="RKy-hb-M4W"/>
+                            <constraint firstItem="LFE-Yb-1c2" firstAttribute="leading" secondItem="g04-M0-oyC" secondAttribute="leading" id="U5q-fP-m22"/>
+                            <constraint firstItem="LFE-Yb-1c2" firstAttribute="top" secondItem="VDr-yA-Qrq" secondAttribute="bottom" id="Ul2-Lb-UQl"/>
+                            <constraint firstItem="g04-M0-oyC" firstAttribute="bottom" secondItem="LFE-Yb-1c2" secondAttribute="bottom" id="Xad-NG-tZ3"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="g04-M0-oyC"/>
                     </view>

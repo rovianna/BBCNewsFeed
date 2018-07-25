@@ -45,6 +45,9 @@
                     <button opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="252" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZNE-wm-a7O">
                         <rect key="frame" x="280" y="337" width="32" height="32"/>
                         <state key="normal" image="star"/>
+                        <connections>
+                            <action selector="favoriteAction:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="0km-fT-H58"/>
+                        </connections>
                     </button>
                 </subviews>
                 <constraints>
