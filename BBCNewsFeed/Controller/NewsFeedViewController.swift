@@ -132,7 +132,16 @@ class NewsFeedViewController: UIViewController {
     }
     
     func getOnlineNewsFeed() {
-
+        Alamofire.request("http://feeds.bbci.co.uk/portuguese/rss.xml", method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil).responseString { (response) in
+            switch response.result {
+            case .success(let data):
+                let xml = SWXMLHash.parse(data)
+                let lastBuildDate = xml["rss"]["channel"]["lastBuildDate"].description
+                self.validateNewsLastBuildDate(lastBuildDate, xml: xml)
+            case .failure(let error):
+                self.showError(error: error)
+            }
+        }
     }
     
 }

@@ -22,8 +22,8 @@ class NewsFeedTableViewCell: UITableViewCell {
     
     var delegate: NewsFeedTableViewCellDelegate?
     var newsFeed: NewsFeed?
-    var newsFeedFavorite = NewsFeedFavorite.init()
-    
+    lazy var newsCommand = FavoriteCommand.init(button: favoriteButton)
+
     override func awakeFromNib() {
         super.awakeFromNib()
         selectionStyle = .none
@@ -46,23 +46,21 @@ class NewsFeedTableViewCell: UITableViewCell {
     
     @IBAction func favoriteAction(_ sender: UIButton) {
         if sender.imageView?.image == #imageLiteral(resourceName: "star") {
-            sender.setImage(#imageLiteral(resourceName: "favorite_star"), for: .normal)
-            execute()
+            newsCommand.execute()
         } else {
-            sender.setImage(#imageLiteral(resourceName: "star"), for: .normal)
-            undo()
+            newsCommand.undo()
         }
     }
 }
 
-extension NewsFeedTableViewCell: Command {
-    
-    func execute() {
-        newsFeedFavorite.favorite(button: favoriteButton)
-    }
-    
-    func undo() {
-        newsFeedFavorite.undo(button: favoriteButton)
-    }
-}
+//extension NewsFeedTableViewCell {
+//    func execute() {
+//        newsCommand
+//        newsFeedFavorite.favorite(button: favoriteButton)
+//    }
+//
+//    func undo() {
+//        newsFeedFavorite.undo(button: favoriteButton)
+//    }
+//}
 
