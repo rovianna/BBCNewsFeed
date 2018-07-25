@@ -96,6 +96,7 @@ class NewsFeedViewController: UIViewController {
                 self.newsFeed = self.retrieveLocalNewsFeed()
                 showInformView(status: .updateNotNeeded)
             } else {
+                userDefaults.set(lastBuildDate, forKey: "lastBuildDate")
                 self.retrieveOnlineNewsFeed(xml: xml)
                 showInformView(status: .updateNeeded)
             }

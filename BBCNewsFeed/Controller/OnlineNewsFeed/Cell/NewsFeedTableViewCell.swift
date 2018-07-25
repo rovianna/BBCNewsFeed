@@ -9,8 +9,8 @@
 import UIKit
 
 protocol NewsFeedTableViewCellDelegate {
-    func newsFeedTableViewCell(_ newsFeedTableViewCell: NewsFeedTableViewCell, didSelectNews: NewsFeed)
-    func newsFeedTableViewCell(_ newsFeedTableViewCell: NewsFeedTableViewCell, didDeselectNews: NewsFeed)
+    func newsFeedTableViewCell(_ newsFeedTableViewCell: NewsFeedTableViewCell, didSelect news: NewsFeed)
+    func newsFeedTableViewCell(_ newsFeedTableViewCell: NewsFeedTableViewCell, didDeselect news: NewsFeed)
 }
 
 class NewsFeedTableViewCell: UITableViewCell {
@@ -45,12 +45,12 @@ class NewsFeedTableViewCell: UITableViewCell {
         if sender.imageView?.image == #imageLiteral(resourceName: "star") {
             sender.setImage(#imageLiteral(resourceName: "favorite_star"), for: .normal)
             if let news = newsFeed {
-            delegate?.newsFeedTableViewCell(self, didSelectNews: news)
+                delegate?.newsFeedTableViewCell(self, didSelect: news)
             }
         } else {
             sender.setImage(#imageLiteral(resourceName: "star"), for: .normal)
             if let news = newsFeed {
-            delegate?.newsFeedTableViewCell(self, didDeselectNews: news)
+                delegate?.newsFeedTableViewCell(self, didDeselect: news)
             }
         }
     }

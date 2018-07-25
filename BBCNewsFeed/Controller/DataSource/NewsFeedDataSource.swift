@@ -67,4 +67,13 @@ class NewsFeedDataSource: NSObject, UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+extension NewsFeedDataSource: NewsFeedTableViewCellDelegate {
+    func newsFeedTableViewCell(_ newsFeedTableViewCell: NewsFeedTableViewCell, didSelect news: NewsFeed) {
+        
+    }
+    
+    func newsFeedTableViewCell(_ newsFeedTableViewCell: NewsFeedTableViewCell, didDeselect news: NewsFeed) {
+        
+    }
+}
 
