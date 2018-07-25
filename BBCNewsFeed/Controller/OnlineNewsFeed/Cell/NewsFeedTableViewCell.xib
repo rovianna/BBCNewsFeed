@@ -69,6 +69,7 @@
             <connections>
                 <outlet property="dateLabel" destination="d9F-wq-VVy" id="bgB-Gm-gva"/>
                 <outlet property="descriptionLabel" destination="gMc-r3-wcn" id="VEA-qP-64e"/>
+                <outlet property="favoriteButton" destination="ZNE-wm-a7O" id="GEN-bk-gyR"/>
                 <outlet property="headerLabel" destination="jWy-LI-cqq" id="B0l-GJ-yUs"/>
             </connections>
             <point key="canvasLocation" x="30" y="88"/>
