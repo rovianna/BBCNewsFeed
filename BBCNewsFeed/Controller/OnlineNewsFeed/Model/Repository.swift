@@ -13,35 +13,35 @@ import SWXMLHash
 fileprivate let userDefaults = UserDefaults.standard
 
 protocol Repository {
-    func getAll() -> [NewsFeed]
+    func getAll(completion: @escaping(Result<[NewsFeed]>) -> Void)
 }
 
 class LocalNewsFeedRepository: Repository {
-    func getAll() -> [NewsFeed] {
+    func getAll(completion: @escaping (Result<[NewsFeed]>) -> Void) {
         var newsFeed = [NewsFeed]()
         let decodedData = userDefaults.object(forKey: "newsFeed") as! Data
         let decodedNews = NSKeyedUnarchiver.unarchiveObject(with: decodedData) as! [NewsFeed]
         newsFeed = decodedNews
-        return newsFeed
+        DispatchQueue.main.async {
+            completion(Result.success(newsFeed))
+        }
     }
 }
 
 class OnlineNewsFeedRepository: Repository {
-    func getAll() -> [NewsFeed] {
+    func getAll(completion: @escaping(Result<[NewsFeed]>) -> Void) {
         var newsFeed = [NewsFeed]()
         Alamofire.request("http://feeds.bbci.co.uk/portuguese/rss.xml", method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil).responseString { (response) in
             switch response.result {
             case .success(let data):
-                let xml = SWXMLHash.parse(data)
-                let lastBuildDate = xml["rss"]["channel"]["lastBuildDate"].description
-                for elem in xml["rss"]["channel"]["item"].all {
-                    let news = NewsFeed(with: elem)
-                    newsFeed.append(news)
+                let newsXML = SWXMLHash.parse(data)
+                newsFeed = newsXML["rss"]["channel"]["item"].all.compactMap({ news in NewsFeed(with: news)})
+                DispatchQueue.main.async {
+                    completion(Result.success(newsFeed))
                 }
             case .failure(let error):
-                break
+                completion(Result.failure(error))
             }
         }
-        return newsFeed
     }
 }

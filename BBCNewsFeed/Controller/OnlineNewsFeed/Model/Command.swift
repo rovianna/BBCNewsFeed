@@ -12,9 +12,6 @@ protocol Favorite {
     func favorite(button: UIButton)
     func undo(button: UIButton)
 }
-
-
-
 class NewsFeedFavorite: Favorite {    
     func favorite(button: UIButton){
         button.setTitle("UNDO", for: .normal)
@@ -31,8 +28,8 @@ class NewsFeedFavorite: Favorite {
         button.setTitleColor(UIColor.red, for: .normal)
         button.setImage(nil, for: .normal)
         DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-        button.setImage(#imageLiteral(resourceName: "star"), for: .normal)
-        button.setTitle(nil, for: .normal)
+            button.setImage(#imageLiteral(resourceName: "star"), for: .normal)
+            button.setTitle(nil, for: .normal)
         }
     }
 }

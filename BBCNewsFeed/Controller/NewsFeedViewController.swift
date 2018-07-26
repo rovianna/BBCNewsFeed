@@ -32,17 +32,12 @@ class NewsFeedViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if Connectivity.isConnectedToInternet {
-            getOnlineNewsFeed()
-        } else {
-            showInformView(status: .offline)
-            newsFeed = retrieveLocalNewsFeed()
-        }
+        validateNewsLastBuildDate()
         self.newsFeedTableView.insertSubview(tableRefreshControl, at: 0)
     }
     
     @objc func handleRefresh(_ sender: UIRefreshControl) {
-        getOnlineNewsFeed()
+        validateNewsLastBuildDate()
         tableRefreshControl.endRefreshing()
     }
     
@@ -61,39 +56,23 @@ class NewsFeedViewController: UIViewController {
         self.source = source
     }
     
-    func retrieveLocalNewsFeed() -> [NewsFeed] {
-        let decodedData = userDefaults.object(forKey: "newsFeed") as! Data
-        let decodedNews = NSKeyedUnarchiver.unarchiveObject(with: decodedData) as! [NewsFeed]
-        return decodedNews
-    }
-    
-    func saveNewsFeedLocally(_ newsFeed: [NewsFeed]) {
-        let encodedData: Data = NSKeyedArchiver.archivedData(withRootObject: newsFeed)
-        userDefaults.set(encodedData, forKey: "newsFeed")
-        userDefaults.synchronize()
-    }
-    
-    func retrieveOnlineNewsFeed(xml: XMLIndexer) {
-        for elem in xml["rss"]["channel"]["item"].all {
-            let news = NewsFeed(with: elem)
-            self.newsFeed.append(news)
-        }
-        self.saveNewsFeedLocally(self.newsFeed)
-    }
-    
-    func validateNewsLastBuildDate(_ lastBuildDate: String, xml: XMLIndexer) {
-        if userDefaults.object(forKey: "lastBuildDate") == nil {
-            userDefaults.set(lastBuildDate, forKey: "lastBuildDate")
-            self.retrieveOnlineNewsFeed(xml: xml)
-        } else {
-            let buildDate = userDefaults.object(forKey: "lastBuildDate") as! String
-            if buildDate == lastBuildDate {
-                self.newsFeed = self.retrieveLocalNewsFeed()
-                showInformView(status: .updateNotNeeded)
-            } else {
-                userDefaults.set(lastBuildDate, forKey: "lastBuildDate")
-                self.retrieveOnlineNewsFeed(xml: xml)
-                showInformView(status: .updateNeeded)
+    func validateNewsLastBuildDate() {
+        let lastBuild = userDefaults.object(forKey: "lastBuildDate") as? String
+        validateLastBuildDate { (result) in
+            switch result {
+            case .success(let data):
+                if let build = lastBuild {
+                    if build == data {
+                        self.getOfflineNewsFeed()
+                        self.showInformView(status: .updateNotNeeded)
+                    }
+                }else {
+                    userDefaults.set(data, forKey: "lastBuildDate")
+                    self.getOnlineNewsFeed()
+                    self.showInformView(status: .updateNeeded)
+                }
+            case .failure(let error):
+                self.showError(error: error)
             }
         }
     }
@@ -126,20 +105,44 @@ class NewsFeedViewController: UIViewController {
     }
     
     func getOfflineNewsFeed() {
-        let decodedData = userDefaults.object(forKey: "newsFeed") as! Data
-        let decodedNews = NSKeyedUnarchiver.unarchiveObject(with: decodedData) as! [NewsFeed]
-        self.newsFeed = decodedNews
+        let offlineRepository = LocalNewsFeedRepository()
+        offlineRepository.getAll { (result) in
+            switch result {
+            case .success(let data):
+                self.newsFeed = data
+            case .failure(let error):
+                self.showError(error: error)
+            }
+        }
     }
     
     func getOnlineNewsFeed() {
+        let onlineRepository = OnlineNewsFeedRepository()
+        onlineRepository.getAll { (result) in
+            switch result {
+            case .success(let data):
+                self.newsFeed = data
+                let encodedData = NSKeyedArchiver.archivedData(withRootObject: self.newsFeed)
+                userDefaults.set(encodedData, forKey: "newsFeed")
+            case .failure(let error):
+                self.showError(error: error)
+            }
+        }
+    }
+    
+    func validateLastBuildDate(completion: @escaping(Result<String>) -> Void) {
         Alamofire.request("http://feeds.bbci.co.uk/portuguese/rss.xml", method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil).responseString { (response) in
             switch response.result {
             case .success(let data):
-                let xml = SWXMLHash.parse(data)
-                let lastBuildDate = xml["rss"]["channel"]["lastBuildDate"].description
-                self.validateNewsLastBuildDate(lastBuildDate, xml: xml)
+                let newsXML = SWXMLHash.parse(data)
+                let buildDate = newsXML["rss"]["channel"]["lastBuildDate"].element!.text
+                DispatchQueue.main.async {
+                    completion(Result.success(buildDate))
+                }
             case .failure(let error):
-                self.showError(error: error)
+                DispatchQueue.main.async {
+                    completion(Result.failure(error))
+                }
             }
         }
     }
