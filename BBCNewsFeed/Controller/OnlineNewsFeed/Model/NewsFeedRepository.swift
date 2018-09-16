@@ -12,11 +12,11 @@ import SWXMLHash
 
 fileprivate let userDefaults = UserDefaults.standard
 
-protocol Repository {
+protocol NewsFeedRepository {
     func getAll(completion: @escaping(Result<[NewsFeed]>) -> Void)
 }
 
-class LocalNewsFeedRepository: Repository {
+class LocalNewsFeedRepository: NewsFeedRepository {
     func getAll(completion: @escaping (Result<[NewsFeed]>) -> Void) {
         var newsFeed = [NewsFeed]()
         let decodedData = userDefaults.object(forKey: "newsFeed") as! Data
@@ -28,7 +28,7 @@ class LocalNewsFeedRepository: Repository {
     }
 }
 
-class OnlineNewsFeedRepository: Repository {
+class OnlineNewsFeedRepository: NewsFeedRepository {
     func getAll(completion: @escaping(Result<[NewsFeed]>) -> Void) {
         var newsFeed = [NewsFeed]()
         Alamofire.request("http://feeds.bbci.co.uk/portuguese/rss.xml", method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil).responseString { (response) in

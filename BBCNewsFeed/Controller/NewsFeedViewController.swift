@@ -28,6 +28,13 @@ class NewsFeedViewController: UIViewController {
             loadNewsFeed(newsFeed)
         }
     }
+    
+    var favoriteFeed = [NewsFeed]() {
+        didSet {
+            loadNewsFeed(favoriteFeed)
+        }
+    }
+    
     var source: NewsFeedDataSource?
     
     override func viewDidLoad() {
@@ -130,6 +137,7 @@ class NewsFeedViewController: UIViewController {
         }
     }
     
+    
     func validateLastBuildDate(completion: @escaping(Result<String>) -> Void) {
         Alamofire.request("http://feeds.bbci.co.uk/portuguese/rss.xml", method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil).responseString { (response) in
             switch response.result {
@@ -147,6 +155,9 @@ class NewsFeedViewController: UIViewController {
         }
     }
     
+    @IBAction func changeNewsFeedAction(_ sender: UISegmentedControl) {
+        
+    }
 }
 
 extension NewsFeedViewController: NewsFeedDelegate {
