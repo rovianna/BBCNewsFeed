@@ -27,9 +27,14 @@ class Favorites: Repository {
     }
     
     func saveFavorites(newsFeed: NewsFeed) {
-        let decodedData = userDefault.object(forKey: "favoriteFeed") as! Data
-        var decodedNews = NSKeyedUnarchiver.unarchiveObject(with: decodedData) as! [NewsFeed]
-        decodedNews.append(newsFeed)
+        var decodedNews = [NewsFeed]()
+        let decodedData = userDefault.object(forKey: "favoriteFeed") as? Data
+        if let decoded = decodedData {
+            decodedNews = NSKeyedUnarchiver.unarchiveObject(with: decoded) as! [NewsFeed]
+            decodedNews.append(newsFeed)
+        } else {
+            decodedNews.append(newsFeed)
+        }
         let encodedData = NSKeyedArchiver.archivedData(withRootObject: decodedNews)
         userDefault.set(encodedData, forKey: "favoriteFeed")
     }

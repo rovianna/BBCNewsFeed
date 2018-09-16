@@ -72,12 +72,12 @@ class NewsFeedViewController: UIViewController {
                     if build == data {
                         self.getOfflineNewsFeed()
                         self.showInformView(status: .updateNotNeeded)
-                    }
-                }else {
+                    } else {
                     userDefaults.set(data, forKey: "lastBuildDate")
                     self.getOnlineNewsFeed()
                     self.showInformView(status: .updateNeeded)
                 }
+            }
             case .failure(let error):
                 self.showError(error: error)
             }
@@ -156,7 +156,18 @@ class NewsFeedViewController: UIViewController {
     }
     
     @IBAction func changeNewsFeedAction(_ sender: UISegmentedControl) {
-        
+        switch sender.selectedSegmentIndex {
+        case 0: validateNewsLastBuildDate()
+        default: let favorite = Favorites()
+        favorite.getAll { (result) in
+            switch result {
+            case .success(let data):
+             self.favoriteFeed = data
+            case .failure(let error):
+                self.showError(error: error)
+                }
+            }
+        }
     }
 }
 
