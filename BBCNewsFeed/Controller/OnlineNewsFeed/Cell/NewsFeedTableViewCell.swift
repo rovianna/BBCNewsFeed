@@ -39,28 +39,24 @@ class NewsFeedTableViewCell: UITableViewCell {
     func configureDateFrom(_ news: NewsFeed) -> Date {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMMM YYYY"
-        dateFormatter.locale = Locale(identifier: "pt_BR")
+        dateFormatter.locale = Locale(identifier: "en_US")
         guard let date = dateFormatter.date(from: news.date) else { return Date() }
         return date
     }
     
     @IBAction func favoriteAction(_ sender: UIButton) {
+        let favorite = Favorites()
         if sender.imageView?.image == #imageLiteral(resourceName: "star") {
             newsCommand.execute()
+            if let news = newsFeed {
+                favorite.saveFavorites(newsFeed: news)
+            }
         } else {
             newsCommand.undo()
+            if let news = newsFeed {
+                favorite.removeFavorite(newsFeed: news)
+            }
         }
     }
 }
-
-//extension NewsFeedTableViewCell {
-//    func execute() {
-//        newsCommand
-//        newsFeedFavorite.favorite(button: favoriteButton)
-//    }
-//
-//    func undo() {
-//        newsFeedFavorite.undo(button: favoriteButton)
-//    }
-//}
 
