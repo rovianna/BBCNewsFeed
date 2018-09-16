@@ -54,6 +54,9 @@
                                     <segment title="Atuais"/>
                                     <segment title="Favoritas"/>
                                 </segments>
+                                <connections>
+                                    <action selector="changeNewsFeedAction:" destination="CqX-CZ-frJ" eventType="valueChanged" id="FMJ-kz-LNk"/>
+                                </connections>
                             </segmentedControl>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
