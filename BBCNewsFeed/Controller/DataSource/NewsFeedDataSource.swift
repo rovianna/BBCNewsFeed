@@ -56,11 +56,6 @@ class NewsFeedDataSource: NSObject, UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "news") as! NewsFeedTableViewCell
-        return cell.frame.size.height
-    }
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let news = newsFeed[indexPath.row]
         delegate?.newsFeedDataSource(self, selectedItem: news)

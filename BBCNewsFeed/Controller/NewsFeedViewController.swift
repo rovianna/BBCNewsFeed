@@ -41,6 +41,8 @@ class NewsFeedViewController: UIViewController {
         super.viewDidLoad()
         validateNewsLastBuildDate()
         self.newsFeedTableView.insertSubview(tableRefreshControl, at: 0)
+        newsFeedTableView.estimatedRowHeight = UITableViewAutomaticDimension
+        newsFeedTableView.rowHeight = 277
     }
     
     @objc func handleRefresh(_ sender: UIRefreshControl) {

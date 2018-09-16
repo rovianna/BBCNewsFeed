@@ -36,12 +36,12 @@ class NewsFeedTableViewCell: UITableViewCell {
         newsFeed = news
     }
     
-    func configureDateFrom(_ news: NewsFeed) -> Date {
+    func configureDateFrom(_ news: NewsFeed) -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd MMMM YYYY"
-        dateFormatter.locale = Locale(identifier: "en_US")
-        guard let date = dateFormatter.date(from: news.date) else { return Date() }
-        return date
+        dateFormatter.dateFormat = "E, dd MMM yyyy hh:mm:ss"
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        guard let date = dateFormatter.date(from: news.date) else { return "" }
+        return date.shortDateFormat
     }
     
     @IBAction func favoriteAction(_ sender: UIButton) {
